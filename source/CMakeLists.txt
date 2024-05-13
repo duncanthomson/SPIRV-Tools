@@ -43,6 +43,7 @@ macro(spvtools_core_tables CONFIG_VERSION)
             ${DEBUGINFO_GRAMMAR_JSON_FILE}
             ${CLDEBUGINFO100_GRAMMAR_JSON_FILE}
     COMMENT "Generate info tables for SPIR-V v${CONFIG_VERSION} core instructions and operands.")
+  message(STATUS "DGT: SPIRV-Tools: add_custom_command: Python3::Interpreter '${GRAMMAR_PROCESSING_SCRIPT}' --spirv-core-grammar='${GRAMMAR_JSON_FILE}' --extinst-debuginfo-grammar='${DEBUGINFO_GRAMMAR_JSON_FILE}' --extinst-cldebuginfo100-grammar='${CLDEBUGINFO100_GRAMMAR_JSON_FILE}' --core-insts-output='${GRAMMAR_INSTS_INC_FILE}' --operand-kinds-output='${GRAMMAR_KINDS_INC_FILE}' --output-language=c++")
   list(APPEND OPCODE_CPP_DEPENDS ${GRAMMAR_INSTS_INC_FILE})
   list(APPEND OPERAND_CPP_DEPENDS ${GRAMMAR_KINDS_INC_FILE})
 endmacro(spvtools_core_tables)
@@ -65,6 +66,7 @@ macro(spvtools_enum_string_mapping CONFIG_VERSION)
             ${DEBUGINFO_GRAMMAR_JSON_FILE}
             ${CLDEBUGINFO100_GRAMMAR_JSON_FILE}
     COMMENT "Generate enum-string mapping for SPIR-V v${CONFIG_VERSION}.")
+  message(STATUS "DGT: SPIRV-Tools: add_custom_command: Python3::Interpreter '${GRAMMAR_PROCESSING_SCRIPT}' --spirv-core-grammar='${GRAMMAR_JSON_FILE}' --extinst-debuginfo-grammar='${DEBUGINFO_GRAMMAR_JSON_FILE}' --extinst-cldebuginfo100-grammar='${CLDEBUGINFO100_GRAMMAR_JSON_FILE}' --extension-enum-output='${GRAMMAR_EXTENSION_ENUM_INC_FILE}' --enum-string-mapping-output='${GRAMMAR_ENUM_STRING_MAPPING_INC_FILE}' --output-language=c++")
   list(APPEND EXTENSION_H_DEPENDS ${GRAMMAR_EXTENSION_ENUM_INC_FILE})
   list(APPEND ENUM_STRING_MAPPING_CPP_DEPENDS ${GRAMMAR_ENUM_STRING_MAPPING_INC_FILE})
 endmacro(spvtools_enum_string_mapping)
@@ -85,6 +87,7 @@ macro(spvtools_vimsyntax CONFIG_VERSION CLVERSION)
             ${GLSL_GRAMMAR_JSON_FILE} ${OPENCL_GRAMMAR_JSON_FILE} ${DEBUGINFO_GRAMMAR_JSON_FILE}
     COMMENT "Generate spvasm.vim: Vim syntax file for SPIR-V assembly.")
 endmacro(spvtools_vimsyntax)
+  message(STATUS "DGT: SPIRV-Tools: add_custom_command: Python3::Interpreter '${VIMSYNTAX_PROCESSING_SCRIPT}' --spirv-core-grammar='${GRAMMAR_JSON_FILE}' --extinst-debuginfo-grammar='${DEBUGINFO_GRAMMAR_JSON_FILE}' --extinst-glsl-grammar='${GLSL_GRAMMAR_JSON_FILE}' --extinst-opencl-grammar='${OPENCL_GRAMMAR_JSON_FILE}' >'${VIMSYNTAX_FILE}'")
 
 macro(spvtools_glsl_tables CONFIG_VERSION)
   set(CORE_GRAMMAR_JSON_FILE "${SPIRV_HEADER_INCLUDE_DIR}/spirv/${CONFIG_VERSION}/spirv.core.grammar.json")
@@ -97,6 +100,7 @@ macro(spvtools_glsl_tables CONFIG_VERSION)
       --output-language=c++
     DEPENDS ${GRAMMAR_PROCESSING_SCRIPT} ${CORE_GRAMMAR_JSON_FILE} ${GLSL_GRAMMAR_JSON_FILE}
     COMMENT "Generate info tables for GLSL extended instructions and operands v${CONFIG_VERSION}.")
+  message(STATUS "DGT: SPIRV-Tools: add_custom_command: Python3::Interpreter '${GRAMMAR_PROCESSING_SCRIPT}' --extinst-glsl-grammar='${GLSL_GRAMMAR_JSON_FILE}' --glsl-insts-output='${GRAMMAR_INC_FILE}' --output-language=c++")
   list(APPEND EXTINST_CPP_DEPENDS ${GRAMMAR_INC_FILE})
 endmacro(spvtools_glsl_tables)
 
@@ -110,6 +114,7 @@ macro(spvtools_opencl_tables CONFIG_VERSION)
       --opencl-insts-output=${GRAMMAR_INC_FILE}
     DEPENDS ${GRAMMAR_PROCESSING_SCRIPT} ${CORE_GRAMMAR_JSON_FILE} ${OPENCL_GRAMMAR_JSON_FILE}
     COMMENT "Generate info tables for OpenCL extended instructions and operands v${CONFIG_VERSION}.")
+  message(STATUS "DGT: SPIRV-Tools: add_custom_command: Python3::Interpreter '${GRAMMAR_PROCESSING_SCRIPT}' --extinst-opencl-grammar='${OPENCL_GRAMMAR_JSON_FILE}' --opencl-insts-output='${GRAMMAR_INC_FILE}'")
   list(APPEND EXTINST_CPP_DEPENDS ${GRAMMAR_INC_FILE})
 endmacro(spvtools_opencl_tables)
 
@@ -126,6 +131,7 @@ macro(spvtools_vendor_tables VENDOR_TABLE SHORT_NAME OPERAND_KIND_PREFIX)
       --vendor-operand-kind-prefix=${OPERAND_KIND_PREFIX}
     DEPENDS ${GRAMMAR_PROCESSING_SCRIPT} ${GRAMMAR_FILE}
     COMMENT "Generate extended instruction tables for ${VENDOR_TABLE}.")
+  message(STATUS "DGT: SPIRV-Tools: add_custom_command: Python3::Interpreter '${GRAMMAR_PROCESSING_SCRIPT}' --extinst-vendor-grammar='${GRAMMAR_FILE}' --vendor-insts-output='${INSTS_FILE}' --vendor-operand-kind-prefix='${OPERAND_KIND_PREFIX}'")
   add_custom_target(spv-tools-${SHORT_NAME} DEPENDS ${INSTS_FILE})
   set_property(TARGET spv-tools-${SHORT_NAME} PROPERTY FOLDER "SPIRV-Tools build")
   list(APPEND EXTINST_CPP_DEPENDS spv-tools-${SHORT_NAME})
@@ -140,6 +146,7 @@ macro(spvtools_extinst_lang_headers NAME GRAMMAR_FILE)
     DEPENDS ${LANG_HEADER_PROCESSING_SCRIPT} ${GRAMMAR_FILE}
     COMMENT "Generate language specific header for ${NAME}.")
   add_custom_target(spirv-tools-header-${NAME} DEPENDS ${OUT_H})
+  message(STATUS "DGT: SPIRV-Tools: add_custom_command: Python3::Interpreter '${LANG_HEADER_PROCESSING_SCRIPT}' --extinst-grammar='${GRAMMAR_FILE}' --extinst-output-path='${OUT_H}'")
   set_property(TARGET spirv-tools-header-${NAME} PROPERTY FOLDER "SPIRV-Tools build")
   list(APPEND EXTINST_CPP_DEPENDS spirv-tools-header-${NAME})
 endmacro(spvtools_extinst_lang_headers)
@@ -175,6 +182,7 @@ add_custom_command(OUTPUT ${GENERATOR_INC_FILE}
   DEPENDS ${XML_REGISTRY_PROCESSING_SCRIPT} ${SPIRV_XML_REGISTRY_FILE}
   COMMENT "Generate tables based on the SPIR-V XML registry.")
 list(APPEND OPCODE_CPP_DEPENDS ${GENERATOR_INC_FILE})
+  message(STATUS "DGT: SPIRV-Tools: add_custom_command: Python3::Interpreter '${XML_REGISTRY_PROCESSING_SCRIPT}' --xml='${SPIRV_XML_REGISTRY_FILE}' --generator-output='${GENERATOR_INC_FILE}'")
 
 # The following .cpp files include the above generated .inc files.
 # Add those .inc files as their dependencies.
@@ -205,6 +213,7 @@ add_custom_command(OUTPUT ${SPIRV_TOOLS_BUILD_VERSION_INC}
    DEPENDS ${SPIRV_TOOLS_BUILD_VERSION_INC_GENERATOR}
            ${SPIRV_TOOLS_CHANGES_FILE}
    COMMENT "Update build-version.inc in the SPIRV-Tools build directory (if necessary).")
+  message(STATUS "DGT: SPIRV-Tools: add_custom_command: Python3::Interpreter '${SPIRV_TOOLS_BUILD_VERSION_INC_GENERATOR}' '${SPIRV_TOOLS_CHANGES_FILE}' '${SPIRV_TOOLS_BUILD_VERSION_INC}'")
 # Convenience target for standalone generation of the build-version.inc file.
 # This is not required for any dependence chain.
 add_custom_target(spirv-tools-build-version
